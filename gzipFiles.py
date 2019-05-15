@@ -1,8 +1,11 @@
+from datetime import datetime
 import gzip
 import re
 from os import listdir
 import pandas as pd
 import gc
+import logging
+import io
 
 source1 = '\\\\vesta.ru\\mfs\\SPECIAL\\common\\vzr_logs\\6site\\'
 source2 = '\\\\vesta.ru\\mfs\\SPECIAL\\common\\vzr_logs\\6site2\\'
@@ -11,7 +14,18 @@ source3 = '\\\\vesta.ru\\mfs\\SPECIAL\\common\\vzr_logs\\6site3\\'
 sources = [source1, source2, source3]
 
 date = '2019-05-10'
-number_of_days_to_scan = 10
+number_of_days_to_scan = 3
+
+# Create and configure logger
+logging.basicConfig(filename=datetime.now().strftime('%Y.%m.%d_%H.%M.%S.log'),
+                    format='%(asctime)s %(message)s',
+                    filemode='w')
+
+# Creating an object
+logger = logging.getLogger()
+
+# Setting the threshold of logger to DEBUG
+logger.setLevel(logging.DEBUG)
 
 
 def parseLogs(date, sources):
@@ -96,8 +110,12 @@ def parseLogs(date, sources):
             bigChunks = pd.concat([bigChunks, getBigChunks(source)], ignore_index=True)
             bigTable = pd.concat([bigTable, parseRequest(bigChunks['xmlRequest'])], ignore_index=True)
 
-            bigChunks.info(memory_usage='deep')
+            buf = io.StringIO()
+            bigChunks.info(memory_usage='deep', buf=buf)
+
+            logger.info(buf.getvalue())
             del bigChunks
+            del buf
             gc.collect()
             bigChunks = pd.DataFrame()
 
@@ -116,10 +134,10 @@ def parseLogs(date, sources):
             result.to_excel(writer, sheet_name='Sheet_name_1')
             smallChunks.to_excel(writer, sheet_name='Sheet_name_2')
             bigTable.to_excel(writer, sheet_name='Sheet_name_3')
-        print('Date ' + date + ' is OK')
+        logger.info('\n\n\tDate ' + date + ' is OK' + '\n\n')
     except MemoryError:
-        print('Problems with date: ' + date)
-        print('Memory Error')
+        logger.error('Problems with date: ' + date)
+        logger.error('Memory Error')
     finally:
         del smallChunks
         del bigTable
