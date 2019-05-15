@@ -96,7 +96,7 @@ def parseLogs(date, sources):
             bigChunks = pd.concat([bigChunks, getBigChunks(source)], ignore_index=True)
             bigTable = pd.concat([bigTable, parseRequest(bigChunks['xmlRequest'])], ignore_index=True)
 
-            # bigChunks.info(memory_usage='deep')
+            bigChunks.info(memory_usage='deep')
             del bigChunks
             gc.collect()
             bigChunks = pd.DataFrame()
