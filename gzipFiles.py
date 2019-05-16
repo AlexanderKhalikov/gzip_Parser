@@ -110,12 +110,13 @@ def parseLogs(date, sources):
             bigChunks = pd.concat([bigChunks, getBigChunks(source)], ignore_index=True)
             bigTable = pd.concat([bigTable, parseRequest(bigChunks['xmlRequest'])], ignore_index=True)
 
-            buf = io.StringIO()
-            bigChunks.info(memory_usage='deep', buf=buf)
+            # buf = io.StringIO()
+            # bigChunks.info(memory_usage='deep', buf=buf)
+            bigChunks.info(memory_usage='deep')
 
-            logger.info(buf.getvalue())
+            # logger.info(buf.getvalue())
             del bigChunks
-            del buf
+            # del buf
             gc.collect()
             bigChunks = pd.DataFrame()
 
@@ -134,10 +135,13 @@ def parseLogs(date, sources):
             result.to_excel(writer, sheet_name='Sheet_name_1')
             smallChunks.to_excel(writer, sheet_name='Sheet_name_2')
             bigTable.to_excel(writer, sheet_name='Sheet_name_3')
-        logger.info('\n\n\tDate ' + date + ' is OK' + '\n\n')
+        # logger.info('\n\n\tDate ' + date + ' is OK' + '\n\n')
+        print('\n\n\tDate ' + date + ' is OK' + '\n\n')
     except MemoryError:
-        logger.error('Problems with date: ' + date)
-        logger.error('Memory Error')
+        # logger.error('Problems with date: ' + date)
+        # logger.error('Memory Error')
+        print('Problems with date: ' + date)
+        print('Memory error')
     finally:
         del smallChunks
         del bigTable
