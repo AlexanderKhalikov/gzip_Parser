@@ -4,8 +4,6 @@ import re
 from os import listdir
 import pandas as pd
 import gc
-import logging
-import io
 
 source1 = '\\\\vesta.ru\\mfs\\SPECIAL\\common\\vzr_logs\\6site\\'
 source2 = '\\\\vesta.ru\\mfs\\SPECIAL\\common\\vzr_logs\\6site2\\'
@@ -15,17 +13,6 @@ sources = [source1, source2, source3]
 
 date = '2019-05-10'
 number_of_days_to_scan = 3
-
-# Create and configure logger
-logging.basicConfig(filename=datetime.now().strftime('%Y.%m.%d_%H.%M.%S.log'),
-                    format='%(asctime)s %(message)s',
-                    filemode='w')
-
-# Creating an object
-logger = logging.getLogger()
-
-# Setting the threshold of logger to DEBUG
-logger.setLevel(logging.DEBUG)
 
 
 def parseLogs(date, sources):
