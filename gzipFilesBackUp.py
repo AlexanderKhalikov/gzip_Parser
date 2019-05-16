@@ -2,7 +2,6 @@ import gzip
 import re
 import pandas as pd
 from os import listdir
-from pprint import pprint
 
 source = '\\\\vesta.ru\\mfs\\SPECIAL\\common\\vzr_logs\\6site\\'
 
